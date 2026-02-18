@@ -20,4 +20,5 @@ O projeto está organizado para ser leve e de fácil navegação:
 Você pode consumir os arquivos diretamente via URL do GitHub ou clonar este repositório para o seu ambiente local:
 
 ```bash
-git clone [https://github.com/matheusraull99/biblia-sagrada-completa.git](https://github.com/matheusraull99/biblia-sagrada-completa.git)
+
+git clone https://github.com/matheusraull99/biblia-sagrada-completa.git
