@@ -18,6 +18,27 @@
 <body>
     <div class="container">
         <h1>📖 Minha Bíblia Digital</h1>
+        <div id="versiculo-do-dia" style="background: #fff8e1; border-left: 5px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 5px; font-style: italic; display: none;">
+    <p id="v-dia-texto"></p>
+    <small id="v-dia-ref" style="font-weight: bold; display: block; text-align: right;"></small>
+</div>
+        function gerarVersiculoDoDia() {
+    if (!dadosBiblia) return;
+
+    // Escolhe um livro, capítulo e versículo aleatórios
+    const livroRand = dadosBiblia[Math.floor(Math.random() * dadosBiblia.length)];
+    const capIndex = Math.floor(Math.random() * livroRand.chapters.length);
+    const capRand = livroRand.chapters[capIndex];
+    const verIndex = Math.floor(Math.random() * capRand.length);
+    const verTexto = capRand[verIndex];
+
+    // Exibe na tela
+    document.getElementById('v-dia-texto').textContent = `"${verTexto}"`;
+    document.getElementById('v-dia-ref').textContent = `— ${livroRand.name} ${capIndex + 1}:${verIndex + 1}`;
+    document.getElementById('versiculo-do-dia').style.display = 'block';
+}
+
+// Chame esta função dentro do seu 'carregarDados', após o 'popularLivros()'
         
         <div class="controles">
             <select id="sel-versao" onchange="resetarLeitor()">
