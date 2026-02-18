@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitor Bíblico - matheusraull99</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; line-height: 1.8; background: #eef2f3; color: #333; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: #2c3e50; text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        .controles { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 30px; background: #f9f9f9; padding: 15px; border-radius: 8px; }
+        select { padding: 10px; border-radius: 5px; border: 1px solid #ccc; min-width: 150px; }
+        #texto-biblico { background: #fff; padding: 20px; border-radius: 8px; }
+        .v-num { font-weight: bold; color: #3498db; font-size: 0.8em; vertical-align: super; margin-right: 5px; }
+        .cap-titulo { color: #2c3e50; text-align: center; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📖 Minha Bíblia Digital</h1>
+        
+        <div class="controles">
+            <select id="sel-versao" onchange="resetarLeitor()">
+                <option value="acf.json">Almeida Corrigida Fiel (ACF)</option>
+                <option value="nvi.json">Nova Versão Internacional (NVI)</option>
+                <option value="aa.json">Almeida Revisada (AA)</option>
+            </select>
+            <select id="sel-livro" onchange="carregarCapitulos()">
+                <option value="">Selecione o Livro</option>
+            </select>
+            <select id="sel-capitulo" onchange="exibirVersiculos()">
+                <option value="">Capítulo</option>
+            </select>
+        </div>
+
+        <div id="texto-biblico">
+            <p style="text-align:center; color:#888;">Selecione uma versão e um livro para começar a leitura.</p>
+        </div>
+    </div>
+
+    <script>
+        let dadosBiblia = null;
+
+        async function carregarDados() {
+            const versao = document.getElementById('sel-versao').value;
+            const res = await fetch(versao);
+            dadosBiblia = await res.json();
+            popularLivros();
+        }
+
+        function popularLivros() {
+            const selLivro = document.getElementById('sel-livro');
+            selLivro.innerHTML = '<option value="">Selecione o Livro</option>';
+            dadosBiblia.forEach((livro, index) => {
+                let opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = livro.name;
+                selLivro.appendChild(opt);
+            });
+        }
+
+        function carregarCapitulos() {
+            const indexLivro = document.getElementById('sel-livro').value;
+            const selCap = document.getElementById('sel-capitulo');
+            selCap.innerHTML = '<option value="">Capítulo</option>';
+            
+            if (indexLivro !== "") {
+                const capitulos = dadosBiblia[indexLivro].chapters;
+                capitulos.forEach((cap, i) => {
+                    let opt = document.createElement('option');
+                    opt.value = i;
+                    opt.textContent = `Capítulo ${i + 1}`;
+                    selCap.appendChild(opt);
+                });
+            }
+        }
+
+        function exibirVersiculos() {
+            const indexLivro = document.getElementById('sel-livro').value;
+            const indexCap = document.getElementById('sel-capitulo').value;
+            const display = document.getElementById('texto-biblico');
+
+            if (indexLivro !== "" && indexCap !== "") {
+                const nomeLivro = dadosBiblia[indexLivro].name;
+                const versiculos = dadosBiblia[indexLivro].chapters[indexCap];
+                
+                let html = `<h2 class="cap-titulo">${nomeLivro} - Capítulo ${parseInt(indexCap) + 1}</h2>`;
+                versiculos.forEach((texto, i) => {
+                    html += `<p><span class="v-num">${i + 1}</span> ${texto}</p>`;
+                });
+                display.innerHTML = html;
+            }
+        }
+
+        function resetarLeitor() {
+            document.getElementById('sel-capitulo').innerHTML = '<option value="">Capítulo</option>';
+            document.getElementById('texto-biblico').innerHTML = '<p style="text-align:center; color:#888;">Carregando nova versão...</p>';
+            carregarDados();
+        }
+
+        // Iniciar carregando a primeira versão
+        carregarDados();
+    </script>
+</body>
+</html>
